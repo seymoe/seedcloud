@@ -1,8 +1,9 @@
 import Vue from 'vue'
+import sdc from './sdks/sdc'
 import App from './App'
 
 Vue.config.productionTip = false
-
+Vue.prototype.$sdc = sdc
 App.mpType = 'app'
 
 const app = new Vue({

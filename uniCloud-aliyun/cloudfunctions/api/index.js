@@ -3,7 +3,7 @@
 const SeedCloud = require('seedcloud')
 
 exports.main = async (event, context) => {
-	const fnName = 'admin'
+	const fnName = 'api'
 	const controllerDir = `${ __dirname }/controller`
 	const app = new SeedCloud({
 		fnName,
