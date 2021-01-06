@@ -51,7 +51,6 @@ class SeedAxios {
 }
 
 export default {
-	hello,
 	SeedAxios
 }
 

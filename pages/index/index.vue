@@ -28,20 +28,17 @@
 				uni.showLoading({
 					title: '处理中...'
 				})
-				uniCloud.callFunction({
-					name: 'admin',
+				this.$sdcAxios.request({
+					url: 'admin/member/list',
 					data: {
-						action: 'member',
-						params: {
-							name: 'DCloud',
-							subType: 'uniCloud',
-							createTime: Date.now()
-						}
+						name: 'DCloud',
+						subType: 'uniCloud',
+						createTime: Date.now()
 					}
 				}).then((res) => {
 					uni.hideLoading()
 					uni.showModal({
-						content: `成功添加一条数据，文档id为：${res.result.id}`,
+						content: `成功添加一条数据，文档id为：${res.id}`,
 						showCancel: false
 					})
 					console.log(res)

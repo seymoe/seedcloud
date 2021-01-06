@@ -29,30 +29,35 @@ const RESCONST = {
 class Response {
   needLogin(message) {
     return {
+			data,
       ...RESCONST.NEED_LOGIN,
       msg: message || RESCONST.NEED_LOGIN.msg
     }
   }
   noPermission(message) {
     return {
+			data,
       ...RESCONST.NO_PERMISSION,
       msg: message || RESCONST.NO_PERMISSION.msg
     }
   }
-  success(message) {
+  success(data = null, message) {
     return {
+			data,
       ...RESCONST.SUCCESS,
       msg: message || RESCONST.SUCCESS.msg
     }
   }
   failed(message) {
     return {
+			data,
       ...RESCONST.FAILED,
       msg: message || RESCONST.FAILED.msg
     }
   }
   error(message) {
     return {
+			data,
       ...RESCONST.ERROR,
       msg: message || RESCONST.ERROR.msg
     }

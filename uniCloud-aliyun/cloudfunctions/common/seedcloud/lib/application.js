@@ -1,6 +1,8 @@
 const Emitter = require('events')
 const fs = require('fs')
 const Response = require('./response')
+const database = require('./utils/database')
+const type = require('./utils/type')
 
 function getPathByAction(absolutePath, action) {
   const lastSplit = action ? action.lastIndexOf('/') : -1
@@ -25,9 +27,14 @@ class Application extends Emitter {
     this.fullPath = `${fnName}/${this.action}`
     this.ROUTES = {}
     this.absolutePath = ''
+		this.invokeFn = null
 
-    this.res = new Response()
+    this.ctx.res = new Response()
     this.debug = true
+		this.utils = {
+			...database,
+			...type
+		}
   }
 
   // 通过控制器路径和操作名获取函数
@@ -36,18 +43,19 @@ class Application extends Emitter {
     if (!action || action.indexOf('./') > -1) return
     let { methodName, path, isDefault } = getPathByAction(absPath, action)
     let controller = null
+		let { ctx } = this
     try {
       controller = require(`${absPath}/${path}`)
     } catch (e) {
       if (e.code == "MODULE_NOT_FOUND") {
         console.error(`action is undefined : ${action}`)
-        return this.res.error(this.debug ? `action is undefined : ${action}` : '')
+        return ctx.res.error(this.debug ? `action is undefined : ${action}` : '')
       }
-      return this.res.error()
+      return ctx.res.error()
     }
     const fn = isDefault ? controller : controller[methodName]
     if (typeof fn != 'function') {
-      return this.res.error(this.debug ? `action is undefined : ${action}` : '')
+      return ctx.res.error(this.debug ? `action is undefined : ${action}` : '')
     }
     return fn
   }
@@ -55,8 +63,8 @@ class Application extends Emitter {
   // 启动函数监听请求
   async listen(absPath) {
     this.absolutePath = absPath
-    const fn = this.getFunction(this.absolutePath, this.action)
-    return await fn()
+    this.invokeFn = this.getFunction(this.absolutePath, this.action)
+    return await this.invokeFn()
   }
 }
 

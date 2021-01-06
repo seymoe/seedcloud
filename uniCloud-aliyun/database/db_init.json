@@ -19,5 +19,9 @@
 	"seed_operate_logs": {
 		"data": [],
 		"index": []
+	},
+	"seed_dictionary": {
+		"data": [],
+		"index": []
 	}
 }
