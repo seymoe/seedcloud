@@ -1,5 +1,6 @@
 const Emitter = require('events')
 const fs = require('fs')
+const Response = require('./response')
 
 function getPathByAction(absolutePath, action) {
   const lastSplit = action ? action.lastIndexOf('/') : -1
@@ -24,6 +25,9 @@ class Application extends Emitter {
     this.fullPath = `${fnName}/${this.action}`
     this.ROUTES = {}
     this.absolutePath = ''
+
+    this.res = new Response()
+    this.debug = true
   }
 
   // 通过控制器路径和操作名获取函数
@@ -34,34 +38,21 @@ class Application extends Emitter {
     let controller = null
     try {
       controller = require(`${absPath}/${path}`)
-			console.log('CONTROLLER', controller)
     } catch (e) {
-			console.log('CONTROLLER', e)
       if (e.code == "MODULE_NOT_FOUND") {
         console.error(`action is undefined : ${action}`)
-        console.error(e)
-        return {
-          state: 'actionError',
-          msg: `action is undefined : ${action}`
-        }
+        return this.res.error(this.debug ? `action is undefined : ${action}` : '')
       }
-      console.error(e)
-      return {
-        state: 'systemError',
-        msg: e.message || '系统错误，请稍后再试'
-      }
+      return this.res.error()
     }
     const fn = isDefault ? controller : controller[methodName]
     if (typeof fn != 'function') {
-      console.error(`action is undefined : ${action}`)
-      return {
-        state: 'actionError',
-        msg: `action is undefined : ${action}`
-      }
+      return this.res.error(this.debug ? `action is undefined : ${action}` : '')
     }
     return fn
   }
 
+  // 启动函数监听请求
   async listen(absPath) {
     this.absolutePath = absPath
     const fn = this.getFunction(this.absolutePath, this.action)

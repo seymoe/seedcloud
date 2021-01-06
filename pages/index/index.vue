@@ -25,7 +25,6 @@
 		},
 		methods: {
 			add() {
-				this.$sdc.hello()
 				uni.showLoading({
 					title: '处理中...'
 				})
