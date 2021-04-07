@@ -1,18 +1,21 @@
 <template>
   <el-drawer
     :title="title"
+    :size="width"
     :before-close="handleClose"
     v-model="dialog"
     direction="rtl"
     custom-class="sd-drawer"
     ref="drawer"
-    >
+  >
     <div class="sd-drawer__content">
-      <slot />
-      <div class="sd-drawer__footer">
-        <el-button @click="cancelDrawer">取 消</el-button>
-        <el-button type="primary" @click="submitDrawer" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
-      </div>
+      <el-scrollbar>
+        <slot />
+      </el-scrollbar>
+    </div>
+    <div class="sd-drawer__footer">
+      <el-button @click="cancelDrawer">取 消</el-button>
+      <el-button type="primary" @click="submitDrawer" :loading="loading">{{ loading ? '提交中 ...' : '确 定' }}</el-button>
     </div>
   </el-drawer>
 </template>
@@ -26,6 +29,10 @@ export default defineComponent({
     title: {
       type: String,
       default: ''
+    },
+    width: {
+      type: Number,
+      default: 460
     },
     cancel: {
       type: Function,
@@ -53,28 +60,21 @@ export default defineComponent({
     }
   },
   methods: {
-    async cancelDrawer() {
+    cancelDrawer() {
       if (typeof this.cancel !== 'function') {
         this.loading = false
-        this.dialog = false
         return
       }
-      const result = await this.cancel(this)
-      if (result !== false) {
-        this.loading = false
-        this.dialog = false
-      }
+      this.cancel(this)
     },
     async submitDrawer() {
       if (typeof this.submit !== 'function') {
         this.loading = false
-        this.dialog = false
         return
       }
       const result = await this.submit(this)
       if (result !== false) {
         this.loading = false
-        this.dialog = false
         this.$refs.drawer.closeDrawer()
       }
     },
@@ -89,3 +89,30 @@ export default defineComponent({
   }
 })
 </script>
+
+<style lang="scss">
+.sd-drawer{
+  .el-drawer__header{
+    margin-bottom: 15px;
+    padding: 15px 15px 0;
+  }
+  .el-drawer__body{
+    height: calc(100% - 60px);
+  }
+  .sd-drawer__content{
+    height: calc(100% - 62px);
+    .el-scrollbar{
+      height: 100%;
+      .el-scrollbar__view{
+        padding-left: 15px;
+        padding-right: 15px;
+        box-sizing: border-box;
+      }
+    }
+  }
+  .sd-drawer__footer{
+    padding: 15px;
+    text-align: right;
+  }
+}
+</style>

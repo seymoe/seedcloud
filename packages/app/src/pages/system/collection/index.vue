@@ -38,7 +38,10 @@
           </el-table-column>
         </el-table>
       </div>
-      <component :is="component" />
+      <component
+        :is="component"
+        @close="handleClose"
+      />
     </template>
     <template v-else>
       <el-page-header @back="goBack" title="" content="详情">
@@ -107,6 +110,9 @@ export default defineComponent({
       this.ccomp = 'detail'
       this.component = Detail
       this.currentRow = row
+    },
+    handleClose() {
+      this.component = ''
     }
   }
 })
